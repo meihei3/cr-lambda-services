@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/yameholo/cr-lambda-services/issues"
   },
-  "homepage": "https://github.com/yameholo/cr-lambda-services#readme"
+  "homepage": "https://github.com/yameholo/cr-lambda-services#readme",
+  "dependencies": {
+    "serverless-python-requirements": "^5.1.0"
+  }
 }
