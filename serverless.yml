@@ -45,8 +45,8 @@ provider:
 #            - "/*"
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  environment:
+    CR_ACCESS_KEY: ${env:CR_ACCESS_KEY}
 
 # you can add packaging information here
 #package:
@@ -114,3 +114,4 @@ functions:
 
 plugins:
   - serverless-python-requirements
+  - serverless-dotenv-plugin
