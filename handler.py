@@ -1,7 +1,8 @@
 import json
 import os
 import requests
-from typing import Dict
+from datetime import datetime, timedelta
+from typing import Dict, List
 
 
 BASE_URL = 'https://api.clashroyale.com/v1'
@@ -46,6 +47,28 @@ def get_member(clan_tag: str) -> Dict[str, str]:
     return res.json()
 
 
+def filter_by_last_seen(items: List[dict], dead_line: datatime) -> List[dict]:
+    """
+    最終ログインがdead_lineのクラメンの情報を抽出する
+
+    Parameters
+    ----------
+    items : List[dict]
+        クランメンバーの情報のリスト
+
+    dead_line : datetime
+        最終ログインのデッドライン
+
+    Returns
+    -------
+    List[dict]
+        dead_lineを超えてしまったクラメンの情報のリスト
+    """
+    before_last_seen = lambda i: datetime.strptime(i['lastSeen'], '%Y%m%dT%H%M%S.000Z') < dead_line
+
+    return [item for item in items if before_last_seen(item)]
+
+
 def lambda_function(event, context) -> Dict[str, str]:
     """
     実行用の関数
@@ -63,5 +86,7 @@ def lambda_function(event, context) -> Dict[str, str]:
         結果
     """
     data = get_member('#228UCY92')
+    dead_line = datetime.now() - timedelta(days=7)
+    filtered_data = filter_by_last_seen(data, dead_line)
 
-    return data
+    return dead_line
