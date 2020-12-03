@@ -54,6 +54,23 @@ def get_member(clan_tag: str) -> Dict[str, str]:
     return res.json()
 
 
+def last_seen_to_datetime(last_seen: str) -> datetime:
+    """
+    last_seenの記法からdatetime型に変換する
+
+    Parameters
+    ----------
+    last_seen : str
+        クランメンバーの最終ログイン
+
+    Returns
+    -------
+    datetime
+        datetime型のlast_seen
+    """
+    return datetime.strptime(last_seen, '%Y%m%dT%H%M%S.000Z')
+
+
 def filter_by_last_seen(items: List[dict], dead_line: datetime) -> List[dict]:
     """
     最終ログインがdead_lineのクラメンの情報を抽出する
@@ -71,7 +88,7 @@ def filter_by_last_seen(items: List[dict], dead_line: datetime) -> List[dict]:
     List[dict]
         dead_lineを超えてしまったクラメンの情報のリスト
     """
-    before_last_seen = lambda i: datetime.strptime(i['lastSeen'], '%Y%m%dT%H%M%S.000Z') < dead_line
+    before_last_seen = lambda i: last_seen_to_datetime(i['lastSeen']) < dead_line
 
     return [item for item in items if before_last_seen(item)]
 
@@ -92,8 +109,8 @@ def generate_message(cr_items: List[dict]) -> str:
     """
     message = ''
     for member in cr_items:
-        last_seen_date = member['lastSeen'].split('T')[0]
-        message += f'\n{member["name"]}: {last_seen_date}'
+        last_seen_diff = str(datetime.now() - last_seen_to_datetime(member['lastSeen'])).split('.')[0]
+        message += f'\n{member["name"]}: {last_seen_diff}'
 
     return message
 
