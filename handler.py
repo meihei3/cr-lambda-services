@@ -76,6 +76,35 @@ def filter_by_last_seen(items: List[dict], dead_line: datatime) -> List[dict]:
     return [item for item in items if before_last_seen(item)]
 
 
+def generate_message(cr_items: List[dict]) -> str:
+    """
+    line notify送信用のメッセージを作成する
+
+    Parameters
+    ----------
+    items : List[dict]
+        クランメンバーの情報のリスト
+
+    Returns
+    -------
+    message : str
+        送信用のメッセージ
+    """
+    message = ''
+    for member in cr_items:
+        last_seen_date = member['lastSeen'].split('T')[0]
+        message += f'\n{member['name']}: {last_seen_date}'
+
+    return message
+
+
+def send_line(message: str):
+    headers = init_headers(LINE_NOTIFY_ACCESS_TOKEN)
+    data = {'message': message}
+
+    requests.post(LINE_NOTIFY_URL, data=data, headers=headers)
+
+
 def lambda_function(event, context) -> Dict[str, str]:
     """
     実行用の関数
@@ -96,4 +125,5 @@ def lambda_function(event, context) -> Dict[str, str]:
     dead_line = datetime.now() - timedelta(days=7)
     filtered_data = filter_by_last_seen(data, dead_line)
 
-    return dead_line
+    if (filtered_data)
+        message = generate_message(filtered_data)
