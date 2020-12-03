@@ -50,6 +50,7 @@ provider:
 # you can define service wide environment variables here
   environment:
     CR_ACCESS_KEY: ${env:CR_ACCESS_KEY}
+    LINE_NOTIFY_ACCESS_TOKEN: ${env:LINE_NOTIFY_ACCESS_TOKEN}
 
   vpc:
     securityGroupIds:

@@ -5,13 +5,21 @@ from datetime import datetime, timedelta
 from typing import Dict, List
 
 
-BASE_URL = 'https://api.clashroyale.com/v1'
-ACCESS_KEY = os.environ['CR_ACCESS_KEY']
+CR_BASE_URL = 'https://api.clashroyale.com/v1'
+LINE_NOTIFY_URL = "https://notify-api.line.me/api/notify"
+
+CR_ACCESS_KEY = os.environ['CR_ACCESS_KEY']
+LINE_NOTIFY_ACCESS_TOKEN = os.environ['LINE_NOTIFY_ACCESS_TOKEN']
 
 
-def init_headers() -> Dict[str, str]:
+def init_headers(api_key: str) -> Dict[str, str]:
     """
     初期化されたヘッダー情報の辞書を返す
+
+    Parameters
+    ----------
+    api_key : str
+        API Key (Token)
 
     Returns
     -------
@@ -20,8 +28,7 @@ def init_headers() -> Dict[str, str]:
     """
     return {
         'content-type': 'application/json; charset=utf-8',
-        'cache-control': 'max-age=60',
-        'authorization': f'Bearer {ACCESS_KEY}',
+        'authorization': f'Bearer {api_key}',
     }
 
 
@@ -39,8 +46,8 @@ def get_member(clan_tag: str) -> Dict[str, str]:
     dict
         APIのレスポンス
     """
-    url = BASE_URL + f'/clans/{clan_tag}/members'
-    headers = init_headers()
+    url = CR_BASE_URL + f'/clans/{clan_tag}/members'
+    headers = init_headers(CR_ACCESS_KEY)
 
     res = requests.get(url, headers=headers)
 
