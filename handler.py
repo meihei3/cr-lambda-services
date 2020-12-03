@@ -27,7 +27,6 @@ def init_headers(api_key: str) -> Dict[str, str]:
         header情報
     """
     return {
-        'content-type': 'application/json; charset=utf-8',
         'authorization': f'Bearer {api_key}',
     }
 
@@ -46,6 +45,7 @@ def get_member(clan_tag: str) -> Dict[str, str]:
     dict
         APIのレスポンス
     """
+    clan_tag = clan_tag.replace('#', '%23')
     url = CR_BASE_URL + f'/clans/{clan_tag}/members'
     headers = init_headers(CR_ACCESS_KEY)
 
@@ -54,7 +54,7 @@ def get_member(clan_tag: str) -> Dict[str, str]:
     return res.json()
 
 
-def filter_by_last_seen(items: List[dict], dead_line: datatime) -> List[dict]:
+def filter_by_last_seen(items: List[dict], dead_line: datetime) -> List[dict]:
     """
     最終ログインがdead_lineのクラメンの情報を抽出する
 
@@ -93,7 +93,7 @@ def generate_message(cr_items: List[dict]) -> str:
     message = ''
     for member in cr_items:
         last_seen_date = member['lastSeen'].split('T')[0]
-        message += f'\n{member['name']}: {last_seen_date}'
+        message += f'\n{member["name"]}: {last_seen_date}'
 
     return message
 
@@ -122,8 +122,11 @@ def lambda_function(event, context) -> Dict[str, str]:
         結果
     """
     data = get_member('#228UCY92')
-    dead_line = datetime.now() - timedelta(days=7)
-    filtered_data = filter_by_last_seen(data, dead_line)
+    dead_line = datetime.now() - timedelta(days=1)
+    filtered_data = filter_by_last_seen(data['items'], dead_line)
 
-    if (filtered_data)
+    if (filtered_data):
         message = generate_message(filtered_data)
+        send_line(message)
+
+    return f'ok: {len(filtered_data)}件取得しました'
