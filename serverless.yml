@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: cr-abandon-to-line
+service: cr-tools
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -49,7 +49,7 @@ provider:
 
 # you can define service wide environment variables here
   environment:
-    CR_ACCESS_KEY: ${env:CR_ACCESS_KEY}
+    CR_ACCESS_KEY: ${env:CR_ACCESS_KEY_EIP}
     LINE_NOTIFY_ACCESS_TOKEN: ${env:LINE_NOTIFY_ACCESS_TOKEN}
 
   # vpc:
