@@ -1,7 +1,7 @@
 import json
 import os
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List
 
 CR_BASE_URL = 'https://proxy.royaleapi.dev/v1'
@@ -55,7 +55,7 @@ def last_seen_to_datetime(last_seen: str) -> datetime:
     Returns:
         datetime: datetime型のlast_seen
     """
-    return datetime.strptime(last_seen, '%Y%m%dT%H%M%S.000Z')
+    return datetime.strptime(last_seen, '%Y%m%dT%H%M%S.000Z').astimezone(timezone.utc)
 
 
 def filter_by_last_seen(items: List[dict], dead_line: datetime) -> List[dict]:
@@ -86,7 +86,7 @@ def generate_message(cr_items: List[dict]) -> str:
     """
     message = ''
     for member in cr_items:
-        last_seen_diff = str(datetime.now() - last_seen_to_datetime(member['lastSeen'])).split('.')[0]
+        last_seen_diff = str(datetime.now(timezone.utc) - last_seen_to_datetime(member['lastSeen'])).split('.')[0]
         message += f'\n{member["name"]}: {last_seen_diff}'
 
     return message
@@ -117,7 +117,7 @@ def lambda_function(event, context) -> Dict[str, str]:
         dict: 結果
     """
     data = get_member('#228UCY92')
-    dead_line = datetime.now() - timedelta(days=1)
+    dead_line = datetime.now(timezone.utc) - timedelta(days=1)
     filtered_data = filter_by_last_seen(data['items'], dead_line)
 
     if (filtered_data):
