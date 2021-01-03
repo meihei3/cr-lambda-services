@@ -117,7 +117,7 @@ def lambda_function(event, context) -> Dict[str, str]:
         dict: 結果
     """
     data = get_member('#228UCY92')
-    dead_line = datetime.now(timezone.utc) - timedelta(days=1)
+    dead_line = datetime.now(timezone.utc) - timedelta(days=5)
     filtered_data = filter_by_last_seen(data['items'], dead_line)
 
     if (filtered_data):
