@@ -16,15 +16,11 @@ def init_headers(api_key: str) -> Dict[str, str]:
     """
     初期化されたヘッダー情報の辞書を返す
 
-    Parameters
-    ----------
-    api_key : str
-        API Key (Token)
+    Args:
+        api_key (str): API Key (Token)
 
     Returns
-    -------
-    dict
-        header情報
+        dict: header情報
     """
     return {
         'authorization': f'Bearer {api_key}',
@@ -35,15 +31,11 @@ def get_member(clan_tag: str) -> Dict[str, str]:
     """
     クラロワAPIからclan_tagのメンバー情報をGETする
 
-    Parameters
-    ----------
-    clan_tag : str
-        クランタグ (ex. #228UCY92)
+    Args:
+        clan_tag (str): クランタグ (ex. #228UCY92)
 
-    Returns
-    -------
-    dict
-        APIのレスポンス
+    Returns:
+        dict: APIのレスポンス
     """
     clan_tag = clan_tag.replace('#', '%23')
     url = CR_BASE_URL + f'/clans/{clan_tag}/members'
@@ -58,15 +50,11 @@ def last_seen_to_datetime(last_seen: str) -> datetime:
     """
     last_seenの記法からdatetime型に変換する
 
-    Parameters
-    ----------
-    last_seen : str
-        クランメンバーの最終ログイン
+    Args:
+        last_seen (str): クランメンバーの最終ログイン
 
-    Returns
-    -------
-    datetime
-        datetime型のlast_seen
+    Returns:
+        datetime: datetime型のlast_seen
     """
     return datetime.strptime(last_seen, '%Y%m%dT%H%M%S.000Z')
 
@@ -75,18 +63,12 @@ def filter_by_last_seen(items: List[dict], dead_line: datetime) -> List[dict]:
     """
     最終ログインがdead_lineのクラメンの情報を抽出する
 
-    Parameters
-    ----------
-    items : List[dict]
-        クランメンバーの情報のリスト
+    Args:
+        items (List[dict])  : クランメンバーの情報のリスト
+        dead_line (datetime): 最終ログインのデッドライン
 
-    dead_line : datetime
-        最終ログインのデッドライン
-
-    Returns
-    -------
-    List[dict]
-        dead_lineを超えてしまったクラメンの情報のリスト
+    Returns:
+        List[dict]: dead_lineを超えてしまったクラメンの情報のリスト
     """
     before_last_seen = lambda i: last_seen_to_datetime(i['lastSeen']) < dead_line
 
@@ -95,17 +77,13 @@ def filter_by_last_seen(items: List[dict], dead_line: datetime) -> List[dict]:
 
 def generate_message(cr_items: List[dict]) -> str:
     """
-    line notify送信用のメッセージを作成する
+    Line Notify送信用のメッセージを作成する
 
-    Parameters
-    ----------
-    items : List[dict]
-        クランメンバーの情報のリスト
+    Args:
+        items (List[dict]): クランメンバーの情報のリスト
 
-    Returns
-    -------
-    message : str
-        送信用のメッセージ
+    Returns:
+        str: 送信用のメッセージ
     """
     message = ''
     for member in cr_items:
@@ -116,6 +94,12 @@ def generate_message(cr_items: List[dict]) -> str:
 
 
 def send_line(message: str):
+    """
+    Line Notifyに送信する
+
+    Args:
+        message (str): 送信用のメッセージ
+    """
     headers = init_headers(LINE_NOTIFY_ACCESS_TOKEN)
     data = {'message': message}
 
@@ -126,17 +110,12 @@ def lambda_function(event, context) -> Dict[str, str]:
     """
     実行用の関数
 
-    Parameters
-    ----------
-    event : list
-        入力パラメータ
-    context : list
-        よくわからん
+    Args:
+        event (list)  : 入力パラメータ
+        context (list): よくわからん
 
-    Returns
-    -------
-    data : dict
-        結果
+    Returns:
+        dict: 結果
     """
     data = get_member('#228UCY92')
     dead_line = datetime.now() - timedelta(days=1)
