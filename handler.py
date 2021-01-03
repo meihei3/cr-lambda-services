@@ -4,8 +4,7 @@ import requests
 from datetime import datetime, timedelta
 from typing import Dict, List
 
-
-CR_BASE_URL = 'https://api.clashroyale.com/v1'
+CR_BASE_URL = 'https://proxy.royaleapi.dev/v1'
 LINE_NOTIFY_URL = "https://notify-api.line.me/api/notify"
 
 CR_ACCESS_KEY = os.environ['CR_ACCESS_KEY']
