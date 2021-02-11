@@ -52,6 +52,9 @@ provider:
     CR_ACCESS_KEY: ${env:CR_ACCESS_KEY_PROXY}
     LINE_NOTIFY_ACCESS_TOKEN: ${env:LINE_NOTIFY_ACCESS_TOKEN}
 
+  # Cloud Watchに保存する日数
+  logRetentionInDays: 30
+
   # vpc:
   #   securityGroupIds:
   #     ${env:VPC_SECURITY_GROUP_IDS}
